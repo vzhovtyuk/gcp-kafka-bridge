@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="GateDocument" type="GateDocumentType"/>
+  <xs:complexType name="FeatureType">
+    <xs:sequence>
+      <xs:element type="NameType" name="Name"/>
+      <xs:element type="ValueType" name="Value"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GateDocumentType">
+    <xs:sequence>
+      <xs:element type="GateDocumentFeaturesType" name="GateDocumentFeatures">
+        <xs:annotation>
+          <xs:documentation>The document's features</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element type="TextWithNodesType" name="TextWithNodes">
+        <xs:annotation>
+          <xs:documentation>The document content area with serialized nodes</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element type="AnnotationSetType" name="AnnotationSet">
+        <xs:annotation>
+          <xs:documentation>The default annotation set</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="version"/>
+  </xs:complexType>
+  <xs:complexType name="ValueType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="className" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="TextWithNodesType" mixed="true">
+    <xs:sequence>
+      <xs:element type="NodeType" name="Node" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="NodeType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="id" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="NameType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="className" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="GateDocumentFeaturesType">
+    <xs:sequence>
+      <xs:element type="FeatureType" name="Feature" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="AnnotationSetType">
+    <xs:sequence>
+      <xs:element type="AnnotationType" name="Annotation" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="AnnotationType" mixed="true">
+    <xs:sequence>
+      <xs:element type="FeatureType" name="Feature" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="Id" use="optional"/>
+    <xs:attribute type="xs:string" name="Type" use="optional"/>
+    <xs:attribute type="xs:string" name="StartNode" use="optional"/>
+    <xs:attribute type="xs:string" name="EndNode" use="optional"/>
+  </xs:complexType>
+</xs:schema>

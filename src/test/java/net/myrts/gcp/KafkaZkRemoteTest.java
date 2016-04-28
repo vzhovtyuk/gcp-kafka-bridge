@@ -1,19 +1,25 @@
 package net.myrts.gcp;
 
-import gate.*;
+import gate.Document;
+import gate.Factory;
+import gate.FeatureMap;
 import gate.cloud.batch.DocumentID;
-import gate.cloud.io.DocumentData;
 import kafka.consumer.ConsumerConfig;
 import kafka.consumer.ConsumerIterator;
 import kafka.consumer.KafkaStream;
 import kafka.javaapi.consumer.ConsumerConnector;
 import kafka.message.MessageAndMetadata;
 import kafka.serializer.Decoder;
+import net.myrts.gcp.document.GateDocumentType;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBIntrospector;
+import javax.xml.bind.Unmarshaller;
+import java.io.StringReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,18 +101,17 @@ public class KafkaZkRemoteTest {
                     logger.debug("No ID found in JSON object " + messageStr + " - ignored");
                 }
             } else {
-                DocumentID documentID = new DocumentID(messageAndMetadata.key());
                 FeatureMap docParams = Factory.newFeatureMap();
                 docParams.put(Document.DOCUMENT_STRING_CONTENT_PARAMETER_NAME,
                         messageAndMetadata.message());
 
-                Document gateDoc =
-                        (Document) Factory.createResource("gate.corpora.DocumentImpl",
-                                docParams, Utils.featureMap(
-                                        GateConstants.THROWEX_FORMAT_PROPERTY_NAME,
-                                        Boolean.TRUE), documentID.getIdText());
-                DocumentData documentData = new DocumentData(gateDoc, documentID);
-                System.out.println("Message " + id + " boody " + documentData);
+                JAXBContext jc = JAXBContext.newInstance(GateDocumentType.class);
+
+                Unmarshaller unmarshaller = jc.createUnmarshaller();
+                StringReader sr = new StringReader(messageStr);
+                GateDocumentType gateDocumentType = (GateDocumentType) JAXBIntrospector.getValue(unmarshaller.unmarshal(sr));
+
+                System.out.println("Message " + id + " body " + gateDocumentType);
             }
         }
     }
