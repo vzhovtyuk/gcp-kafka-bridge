@@ -1,0 +1,16 @@
+<batch id="annieBatch" xmlns="http://gate.ac.uk/ns/cloud/batch/1.0">
+    <application file="../ANNIE.gapp"/>
+
+    <report file="../reports/ANNIE.xml"/>
+
+    <input topic="test" zkHost="192.168.99.100:2181" kafkaHost="192.168.99.100:9092" mimeType="text/xml"
+           class="net.myrts.gcp.KafkaInputHandler"/>
+
+    <output
+            dir="../output-files-gate"
+            compression="none"
+            encoding="UTF-8"
+            fileExtension=".GATE.xml" class="gate.cloud.io.file.GATEStandOffFileOutputHandler">
+    </output>
+
+</batch>    
