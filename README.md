@@ -15,6 +15,7 @@ This means that GCP will consume messages from topic topic_in Kafka host 192.168
 Technical details:
 Solution tested with Kafka 0.8.0.2 and GCP 2.5.
 GCP binaries available in project and can be run ANNIE default application. In order to run GCP please execute the following:
+
 1. Copy resulting jar (containing all dependencies) to GCP/workdir/lib
 2. Navigate to working directory GCP/workdir
 3. Clean existing pathes. Execute sh bin/clean.sh
