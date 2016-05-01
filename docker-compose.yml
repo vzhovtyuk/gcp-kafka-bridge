@@ -1,22 +1,27 @@
-zookeeper:
-  image: wurstmeister/zookeeper
-  ports:
+version: '2'
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    mem_limit: 1g
+    ports:
     - "2181:2181"
-kafka:
-  image: wurstmeister/kafka
-  ports:
+  kafka:
+    image: wurstmeister/kafka
+    mem_limit: 2g
+    ports:
     - "9092:9092"
-  links:
-    - zookeeper:zk
-  environment:
-    KAFKA_ADVERTISED_HOST_NAME: 192.168.99.100
-    KAFKA_CREATE_TOPICS: "test:1:1"
-  volumes:
-    - /var/run/docker.sock:/var/run/docker.sock   
-gcp:
-  image: gcp:latest
-  mem_limit: 2g
-  links:
-  - kafka
-  environment:
-  - KAFKA_HOST=kafka
+    links:
+    - zookeeper
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: 192.168.99.100
+      KAFKA_CREATE_TOPICS: "test_in:1:1,test_out:1:1"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+  gcp:
+    image: gcp:latest
+    mem_limit: 2g
+    links:
+    - kafka
+    environment:
+      KAFKA_HOST: kafka
