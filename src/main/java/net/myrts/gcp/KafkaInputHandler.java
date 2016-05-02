@@ -12,6 +12,7 @@ import kafka.consumer.KafkaStream;
 import kafka.javaapi.consumer.ConsumerConnector;
 import kafka.message.MessageAndMetadata;
 import kafka.serializer.Decoder;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -42,9 +43,18 @@ public class KafkaInputHandler implements StreamingInputHandler {
 
     @Override
     public void config(Map<String, String> map) throws IOException, GateException {
+        String zkHost = map.getOrDefault("zkHost", System.getenv("KAFKA_ZOOKEEPER_CONNECT"));
+        String kafkaHost = map.getOrDefault("kafkaHost", System.getenv("KAFKA_HOST"));
+        
+        if(StringUtils.isEmpty(zkHost)) {
+            throw new IllegalArgumentException("Zookeeper host is not defined neither in hadler config nor in KAFKA_ZOOKEEPER_CONNECT environment variable");
+        }
+        if(StringUtils.isEmpty(kafkaHost)) {
+            throw new IllegalArgumentException("Kafka host is not defined neither in hadler config nor in KAFKA_HOST environment variable");
+        }
         final Properties consumerProps = new Properties();
-        consumerProps.put("zookeeper.connect", map.get("zkHost"));
-        consumerProps.put("bootstrap.servers", map.get("kafkaHost"));
+        consumerProps.put("zookeeper.connect", zkHost);
+        consumerProps.put("bootstrap.servers", kafkaHost);
         consumerProps.put("group.id", "test");
         consumerProps.put("enable.auto.commit", "true");
         consumerProps.put("auto.commit.interval.ms", "1000");
@@ -109,17 +119,12 @@ public class KafkaInputHandler implements StreamingInputHandler {
                 if (mimeType != null) {
                     docParams.put(Document.DOCUMENT_MIME_TYPE_PARAMETER_NAME, mimeType);
                 }
-                try {
-                    Document gateDoc =
-                            (Document) Factory.createResource("gate.corpora.DocumentImpl",
-                                    docParams, Utils.featureMap(
-                                            GateConstants.THROWEX_FORMAT_PROPERTY_NAME,
-                                            Boolean.TRUE), documentID.getIdText());
-                    return new DocumentData(gateDoc, documentID);
-                } catch (Exception e) {
-                    // logger.warn("Error encountered while parsing object with ID " + id
-                    //       + " - skipped", e);
-                }
+                Document gateDoc =
+                        (Document) Factory.createResource("gate.corpora.DocumentImpl",
+                                docParams, Utils.featureMap(
+                                        GateConstants.THROWEX_FORMAT_PROPERTY_NAME,
+                                        Boolean.TRUE), documentID.getIdText());
+                return new DocumentData(gateDoc, documentID);
             }
         }
 

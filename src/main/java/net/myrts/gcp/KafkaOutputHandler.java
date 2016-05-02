@@ -5,6 +5,7 @@ import gate.cloud.batch.AnnotationSetDefinition;
 import gate.cloud.batch.DocumentID;
 import gate.cloud.io.OutputHandler;
 import gate.util.GateException;
+import org.apache.commons.lang.StringUtils;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.log4j.Logger;
@@ -41,7 +42,11 @@ public class KafkaOutputHandler implements OutputHandler {
     @Override
     public void config(Map<String, String> map) throws IOException, GateException {
         topic = map.get("topic");
-        String brokerHost = map.get("kafkaHost");
+        String brokerHost = map.getOrDefault("kafkaHost", System.getenv("KAFKA_HOST"));
+
+        if (StringUtils.isEmpty(brokerHost)) {
+            throw new IllegalArgumentException("Kafka host is not defined neither in hadler config nor in KAFKA_HOST environment variable");
+        }
 
         Properties props = new Properties();
         props.put("bootstrap.servers", brokerHost);

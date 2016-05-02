@@ -3,11 +3,10 @@
 
     <report file="../reports/ANNIE.xml"/>
 
-    <input topic="test_in" zkHost="192.168.99.100:2181" kafkaHost="192.168.99.100:9092" mimeType="text/xml"
+    <input topic="test_in" mimeType="text/xml"
            class="net.myrts.gcp.KafkaInputHandler"/>
 
     <output topic="test_out" 
-            kafkaHost="192.168.99.100:9092"
             class="net.myrts.gcp.KafkaOutputHandler">
     </output>
 

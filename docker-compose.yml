@@ -24,4 +24,5 @@ services:
     links:
     - kafka
     environment:
-      KAFKA_HOST: kafka
+      KAFKA_HOST: kafka:9092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
