@@ -1,1 +1,3 @@
 GCP/* linguist-vendored=false
+docker-compose.yml linguist-vendored=false
+pom.xml linguist-vendored=false
