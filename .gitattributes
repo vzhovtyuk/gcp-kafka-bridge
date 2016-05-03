@@ -1,4 +1,5 @@
 GCP/* linguist-vendored=false
+GCP/gcp-2.5/doc/* linguist-vendored=false
 docker-compose.yml linguist-vendored=false
 pom.xml linguist-vendored=false
 src/* linguist-vendored
