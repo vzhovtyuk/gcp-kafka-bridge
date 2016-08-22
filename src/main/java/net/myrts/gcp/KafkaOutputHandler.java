@@ -80,6 +80,7 @@ public class KafkaOutputHandler implements OutputHandler {
     public void outputDocument(Document document, DocumentID documentID) throws IOException, GateException {
         ProducerRecord<String, String> producerRecord
                 = new ProducerRecord<>(topic, documentID.getIdText(), document.toXml());
+        logger.info("Produced document - " + producerRecord.key() + " to topic " + topic);
         producer.send(producerRecord);
     }
 

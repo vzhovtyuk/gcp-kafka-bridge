@@ -101,6 +101,7 @@ public class KafkaInputHandler implements StreamingInputHandler {
     public DocumentData nextDocument() throws IOException, GateException {
         while (consumerIterator.hasNext()) {
             MessageAndMetadata<String, String> messageAndMetadata = consumerIterator.next();
+            logger.info("Consumed document - " + messageAndMetadata.key());
             String messageStr = messageAndMetadata.message();
             String id = messageAndMetadata.key();
             if (id == null || "".equals(id)) {
@@ -114,8 +115,12 @@ public class KafkaInputHandler implements StreamingInputHandler {
             } else {
                 DocumentID documentID = new DocumentID(id);
                 FeatureMap docParams = Factory.newFeatureMap();
+                docParams.put(Document.DOCUMENT_MARKUP_AWARE_PARAMETER_NAME,
+                        Boolean.TRUE);
+                docParams.put(Document.DOCUMENT_PRESERVE_CONTENT_PARAMETER_NAME,
+                        Boolean.TRUE);
                 docParams.put(Document.DOCUMENT_STRING_CONTENT_PARAMETER_NAME,
-                        messageAndMetadata.message());
+                        messageStr);
                 if (mimeType != null) {
                     docParams.put(Document.DOCUMENT_MIME_TYPE_PARAMETER_NAME, mimeType);
                 }
